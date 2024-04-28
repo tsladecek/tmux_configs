@@ -40,7 +40,7 @@ then
     exit 1;
 fi
 
-setup_default() {
+setup_empty() {
     tmux new -c $DEFAULT_DIRECTORY -d -s "$SESSION" -n "console"
 }
 
@@ -70,11 +70,17 @@ setup_node ()
     tmux send-keys -t $SESSION:1.1 C-l 
 }
 
-setup_c ()
+setup_default ()
 {
     tmux new -c $DEFAULT_DIRECTORY -d -s "$SESSION" -n "ide"
     tmux new-window -c $DEFAULT_DIRECTORY -t $SESSION:1 -n "console"
     tmux send-keys -t $SESSION:0.0 "nvim" C-m
+}
+
+setup_db () 
+{
+    tmux new -c $DEFAULT_DIRECTORY -d -s "$SESSION" -n "dbui"
+    tmux send-keys -t $SESSION:0.0 "nvim -c DBUI" C-m
 }
 
 tmux has-session -t "$SESSION"
@@ -84,8 +90,9 @@ then
     case $PROJECT in
     python) setup_python;;
     node) setup_node;;
-    c) setup_c;;
-    *) setup_default;;
+    default) setup_default;;
+    db) setup_db;;
+    *) setup_empty;;
     esac
 
     # use ide session as default + open nvim
